@@ -1,19 +1,14 @@
-from utils.add import add
+from src.masks import get_mask_card_number, get_mask_account
 
-result = add(1, 2)
-print(f"Result of addition: {result}")
+def main():
+    card_example = 7000792289606361
+    account_example = 73654112345678901234
 
-def sum_of_values(value_1: int, value_2: int) -> int:
-    """
-    Функция, суммирующая два числа
-    """
-    summa = value_1 + value_2
-    return summa
+    masked_card = get_mask_card_number(card_example)
+    masked_account = get_mask_account(account_example)
 
+    print("Маскированная карта:", masked_card)
+    print("Маскированный счёт:", masked_account)
 
-def sub_of_values(value_1, value_2):
-    """
-    Функция, вычитающая два числа
-    """
-    subtract = value_1 - value_2
-    return subtract
+if __name__ == "__main__":
+    main()
