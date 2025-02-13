@@ -1,12 +1,11 @@
-from src.masks import get_mask_card_number, get_mask_account
-from src.widget import mask_account_card, get_date
+from src.masks import get_mask_account, get_mask_card_number
+from src.widget import get_date, mask_account_card
 
 
 def main():
     card_example = 7000792289606361
     account_example = 73654112345678901234
     account_card_example = "Счет 73654108430135874305"
-
 
     masked_card = get_mask_card_number(card_example)
     masked_account = get_mask_account(account_example)
