@@ -1,3 +1,4 @@
+from datetime import datetime
 
 from src.masks import get_mask_account, get_mask_card_number
 
@@ -34,6 +35,13 @@ def get_date(date: str) -> str | None:
     :param date: Строка с датой в формате "2024-03-11T02:26:18.671407"
     :return: Строка с датой в формате "ДД.ММ.ГГГГ" ("11.03.2024")
     """
-
+    try:
+        # Пытаемся преобразовать строку в объект datetime
+        date_obj = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        # Возвращаем дату в нужном формате
+        return date_obj.strftime("%d.%m.%Y")
+    except ValueError:
+        # Если строка некорректна, возвращаем None
+        return None
     new_date: list[str] = date[0:10].split("-")
     return ".".join(new_date[::-1])
