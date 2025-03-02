@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def transactions_list():
     """Возвращает список словарей с тестовыми данными (для модуля processing)."""

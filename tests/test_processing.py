@@ -1,5 +1,7 @@
 import pytest
+
 from src.processing import filter_by_state
+
 
 def test_filter_by_state_executed(transactions_list):
     result = filter_by_state(transactions_list, "EXECUTED")
@@ -20,6 +22,7 @@ def test_filter_by_state_empty_list(transactions_list):
 #tests/test_processing.py
 
 from src.processing import sort_by_date
+
 
 def test_sort_by_date_desc(transactions_list):
     """Проверяем сортировку по убыванию даты."""

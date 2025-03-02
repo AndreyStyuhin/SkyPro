@@ -1,5 +1,7 @@
 import pytest
+
 from src.masks import get_mask_card_number
+
 
 #@pytest.mark.parametrize(
 #    "input_card, expected",
@@ -33,6 +35,7 @@ test_get_mask_card_number()
 
 
 from src.masks import get_mask_account
+
 
 @pytest.mark.parametrize(
     "input_account, expected",

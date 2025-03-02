@@ -1,5 +1,7 @@
 import pytest
+
 from src.widget import mask_account_card
+
 
 @pytest.mark.parametrize(
     "input_value, expected",
@@ -15,6 +17,7 @@ def test_mask_account_card(input_value, expected):
 
 
 from src.widget import get_date
+
 
 @pytest.mark.parametrize(
     "input_date_str, expected",
