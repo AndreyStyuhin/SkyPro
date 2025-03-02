@@ -22,3 +22,6 @@ dist/
 
 # Контрольные точки в Jupyter notebook лучше оставить в стороне
 .ipynb_checkpoints
+
+# Файлы, созданные IDE
+.vscode/
