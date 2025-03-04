@@ -1,5 +1,6 @@
 from src.masks import get_mask_account, get_mask_card_number
 from src.widget import get_date, mask_account_card
+from src.processing import filter_by_state, sort_by_date
 
 
 def main():
@@ -29,7 +30,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-from src.processing import filter_by_state, sort_by_date
 
 data = [
     {'id': 41428829, 'state': 'EXECUTED', 'date': '2019-07-03T18:35:29.512364'},
