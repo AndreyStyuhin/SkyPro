@@ -72,6 +72,27 @@ def test_filter_by_currency(transactions):
     assert len(no_currency_transactions) == 0  # Нет транзакций в GBP
 
 
+def test_filter_by_currency_edge_cases(transactions):
+    # Транзакция без operationAmount
+    transaction_without_operation_amount = {"id": 1, "state": "EXECUTED", "date": "2023-01-01"}
+    transactions.append(transaction_without_operation_amount)
+
+    # Транзакция без currency
+    transaction_without_currency = {"id": 2, "state": "EXECUTED", "date": "2023-01-01",
+                                    "operationAmount": {"amount": "100.00"}}
+    transactions.append(transaction_without_currency)
+
+    # Транзакция без code
+    transaction_without_code = {"id": 3, "state": "EXECUTED", "date": "2023-01-01",
+                                "operationAmount": {"amount": "100.00", "currency": {"name": "USD"}}}
+    transactions.append(transaction_without_code)
+
+    # Проверяем, что такие транзакции не попадают в результат
+    usd_transactions = list(filter_by_currency(transactions, "USD"))
+    assert len(usd_transactions) == 3  # Должно быть 3 транзакции с USD
+    assert {t["id"] for t in usd_transactions} == {939719570, 142264268, 895315941}
+
+
 # Тестирование функции transaction_descriptions
 def test_transaction_descriptions(transactions):
     descriptions = list(transaction_descriptions(transactions))
@@ -89,6 +110,25 @@ def test_transaction_descriptions(transactions):
     # Тестируем пустой список
     empty_descriptions = list(transaction_descriptions([]))
     assert len(empty_descriptions) == 0  # Пустой список, должно быть 0 описаний
+
+
+def test_transaction_descriptions_edge_cases(transactions):
+    # Транзакция без description
+    transaction_without_description = {"id": 4, "state": "EXECUTED", "date": "2023-01-01"}
+    transactions.append(transaction_without_description)
+
+    descriptions = list(transaction_descriptions(transactions))
+    assert len(descriptions) == 6  # Должно быть 6 описаний, включая пустое
+
+    expected_descriptions = [
+        "Перевод организации",
+        "Перевод со счета на счет",
+        "Перевод со счета на счет",
+        "Перевод с карты на карту",
+        "Перевод организации",
+        "",
+    ]
+    assert descriptions == expected_descriptions
 
 
 # Тестирование генератора card_number_generator
@@ -118,3 +158,21 @@ def test_card_number_generator(start, end, expected):
     # Проверка обработки крайних значений
     assert list(card_number_generator(99999999, 100000000)) == ["0000 0000 9999 9999", "0000 0001 0000 0000"]
     assert list(card_number_generator(1, 0)) == []  # Если диапазон неправильный, должен быть пустой список
+
+
+def test_card_number_generator_edge_cases():
+    # Диапазон с отрицательными числами
+    negative_numbers = list(card_number_generator(-5, -1))
+    assert negative_numbers == []  # Ожидаем пустой список
+
+    # Диапазон с очень большими числами (превышающими 16 цифр)
+    large_numbers = list(card_number_generator(9999999999999999, 10000000000000000))
+    assert large_numbers == []  # Ожидаем пустой список, так как диапазон превышает допустимый
+
+    # Диапазон с одинаковыми start и end
+    single_number = list(card_number_generator(1234567890123456, 1234567890123456))
+    assert single_number == ["1234 5678 9012 3456"]
+
+    # Диапазон с start > end
+    invalid_range = list(card_number_generator(10, 5))
+    assert invalid_range == []  # Ожидаем пустой список
