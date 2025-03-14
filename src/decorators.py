@@ -1,26 +1,25 @@
-
-'''
-Напишите Декоратор log, который будет автоматически логировать начало и конец выполнения функции,
-а также ее результаты или возникшие ошибки.
-Декоратор должен принимать необязательный аргумент filename,
-который определяет, куда будут записываться логи (в файл или в консоль):
-Если filename задан, логи записываются в указанный файл.
-Если filename не задан, логи выводятся в консоль.
-Логирование должно включать:
-Имя функции и результат выполнения при успешной операции.
-Имя функции, тип возникшей ошибки и входные параметры, если выполнение функции привело к ошибке
-'''
-
 import logging
 import os
 from datetime import datetime
-
+from typing import Callable, TypeVar, Any
 
 # Настройка логирования
-def setup_logger(filename=None):
+def setup_logger(filename: str | None = None) -> logging.Logger:
+    """
+    Настраивает логгер для записи в файл или вывода в консоль.
+
+    Параметры:
+    - filename (str | None): Имя файла для записи логов. Если None, логи выводятся в консоль.
+
+    Возвращает:
+    - logger (logging.Logger): Настроенный объект логгера.
+    """
     logger = logging.getLogger("my_logger")
     logger.setLevel(logging.DEBUG)
     formatter = logging.Formatter("%(asctime)s - %(message)s")
+
+    # Удаляем существующие обработчики, чтобы избежать дублирования ведения журнала
+    logger.handlers.clear()
 
     if filename is not None:
         log_file = os.path.join("logs", filename)
@@ -35,28 +34,28 @@ def setup_logger(filename=None):
 
     return logger
 
-
-def log(filename=None):
+# Декоратор для логирования вызовов функции
+def log(filename: str | None = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
-        Декоратор для логирования вызовов функции.
+    Декоратор для логирования вызовов функции.
 
-        Этот декоратор записывает информацию о вызовах обернутой функции, включая
-        переданные аргументы и возвращаемое значение, в указанный файл или выводит
-        в консоль. В случае возникновения исключения декоратор также записывает
-        информацию об ошибке.
+    Этот декоратор записывает информацию о вызовах обернутой функции, включая
+    переданные аргументы и возвращаемое значение, в указанный файл или выводит
+    в консоль. В случае возникновения исключения декоратор также записывает
+    информацию об ошибке.
 
-        Параметры:
-        - filename (str): Имя файла, в который будет записываться лог. Если не указано,
-          лог выводится в консоль.
+    Параметры:
+    - filename (str | None): Имя файла, в который будет записываться лог. Если не указано,
+      лог выводится в консоль.
 
-        Возвращает:
-        - decorator (function): Функцию-декоратор, которая оборачивает
-          целевую функцию.
-        """
+    Возвращает:
+    - decorator (function): Функцию-декоратор, которая оборачивает целевую функцию.
+    """
     logger = setup_logger(filename)
+    R = TypeVar("R")
 
-    def decorator(func):
-        def wrapper(*args, **kwargs):
+    def decorator(func: Callable[..., R]) -> Callable[..., R]:
+        def wrapper(*args: Any, **kwargs: Any) -> R:
             function_name = func.__name__
             start_time = datetime.now()
             logger.info(f"{function_name} called at {start_time.isoformat()} with args: {args} and kwargs: {kwargs}")
@@ -73,4 +72,3 @@ def log(filename=None):
         return wrapper
 
     return decorator
-
