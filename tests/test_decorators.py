@@ -2,6 +2,16 @@ import pytest
 
 from src.decorators import log  # Импорт декоратора
 
+'''Ожидаемый вывод в лог-файл mylog.txt при успешном выполнении:
+
+my_function ok
+
+Ожидаемый вывод при ошибке:
+
+my_function error: тип ошибки. Inputs: (1, 2), {}
+
+Где тип ошибки заменяется на текст ошибки.
+'''
 
 # Пример успешной функции
 @log(filename="mylog.txt")
