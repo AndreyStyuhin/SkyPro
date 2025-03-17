@@ -1,0 +1,4 @@
+2025-03-14 16:00:12,239 - successful_function called at 2025-03-14T16:00:12.239535 with args: (1, 2) and kwargs: {}
+2025-03-14 16:00:12,239 - successful_function result: 3
+2025-03-14 16:00:12,242 - error_function called at 2025-03-14T16:00:12.242200 with args: (1, 0) and kwargs: {}
+2025-03-14 16:00:12,242 - error_function error: ZeroDivisionError. Inputs: (1, 0), {}
