@@ -1,22 +1,32 @@
-import unittest
 from unittest.mock import patch, MagicMock
-from src.utils import load_transactions
-from src.external_api import convert_to_rub
+from src.utils import load_operations, convert_to_rub
 
-class TestTransactions(unittest.TestCase):
+# Тест для load_operations
+import json
 
-    @patch('external_api.convert_to_rub')
-    def test_load_transactions(self, mock_convert_to_rub):
-        mock_convert_to_rub.return_value = 75.0  # Мокаем курс 1 USD = 75 RUB
+def test_load_operations():
+    # Создаем временный файл с данными
+    with open("test_operations.json", "w", encoding="utf-8") as f:
+        json.dump([{"amount": 100, "currency": "RUB"}], f)
 
-        transactions = [
-            {'amount': 100, 'currency': 'RUB'},
-            {'amount': 1, 'currency': 'USD'},
-            {'amount': 10, 'currency': 'EUR'}
-        ]
+    # Проверяем загрузку данных
+    result = load_operations("test_operations.json")
+    assert result == [{"amount": 100, "currency": "RUB"}]
 
-        result = load_transactions(transactions)
-        self.assertEqual(result, 100 + 75 + 750)  # 100 RUB + 1 USD * 75 + 10 EUR * 75
+    # Проверяем случай с пустым файлом
+    with open("empty_operations.json", "w", encoding="utf-8") as f:
+        f.write("")
 
-if __name__ == '__main__':
-    unittest.main()
+    result = load_operations("empty_operations.json")
+    assert result == []
+
+# Тест для convert_to_rub
+@patch("requests.get")
+def test_convert_to_rub(mock_get):
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"result": 75.5}
+    mock_get.return_value = mock_response
+
+    result = convert_to_rub(1, "USD")
+    assert result == 75.5

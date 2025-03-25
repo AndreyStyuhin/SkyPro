@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv('EXCHANGE_RATES_API_KEY')
+API_KEY = os.getenv('EXCHANGE_RATE_API_KEY')
 BASE_URL = 'https://api.apilayer.com/exchangerates_data/latest'
 
 def get_exchange_rate(base_currency: str, target_currency: str) -> float:
