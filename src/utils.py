@@ -1,86 +1,127 @@
-"""
-Напишите функцию, которая принимает на вход путь до JSON-файла и возвращает список словарей с данными о финансовых транзакциях.
-Если файл пустой, содержит не список или не найден, функция возвращает пустой список. Функцию поместите в модуль utils.
-Файл с данными о финансовых транзакциях operations.json поместите в директорию data/ в корне проекта.
-def load_operations(path):
-
-"""
-
-from typing import Union
 import json
-import requests
-import logging
-from typing import List, Dict, Any
 import os
+import logging
+from pathlib import Path
+from typing import List, Dict, Any, Union
+import requests
 from dotenv import load_dotenv
+
+# Настройка логгера должна быть ДО всех функций
+PROJECT_ROOT = Path(__file__).parent.parent
+LOG_DIR = PROJECT_ROOT / "logs"
+LOG_DIR.mkdir(exist_ok=True)
+
+logger = logging.getLogger("utils")
+logger.setLevel(logging.INFO)  # Устанавливаем уровень
+
+# Очищаем существующие handlers
+logger.handlers = []
+
+# Создаем и настраиваем handler
+file_handler = logging.FileHandler(LOG_DIR / "utils.log", mode="w")
+file_handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+file_handler.setFormatter(formatter)
+
+# Добавляем handler к логгеру
+logger.addHandler(file_handler)
+
+# Также добавим вывод в консоль для отладки
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+logger.info("Логгер успешно инициализирован")  # Тестовое сообщение
 
 
 def load_operations(path: str) -> List[Dict[str, Any]]:
-    """
-    Загружает данные о финансовых транзакциях из JSON-файла.
-
-    Аргументы:
-        path (str): Путь к JSON-файлу.
-
-    Возвращает:
-        List[Dict[str, Any]]: Список словарей с данными о транзакциях,
-                              или пустой список, если файл не найден, пуст или не содержит список.
-    """
+    """Загружает данные о транзакциях из JSON-файла"""
     try:
+        logger.info(f"Попытка загрузить файл: {path}")
+
         with open(path, 'r', encoding='utf-8') as file:
-            logging.debug(f"Загружаем операции из {path}")
             data = json.load(file)
-            if not isinstance(data, list):  # Проверяем, что данные — это список
-                logging.warning(f"Файл {path} не содержит корректный список операций")
+
+            if not isinstance(data, list):
+                logger.warning(f"Файл {path} не содержит список!")
                 return []
-            logging.info(f"Загрузка операций {len(data)} прошла успешно")
-            return data  # Возвращаем список словарей
-    except (FileNotFoundError, json.JSONDecodeError, PermissionError) as e:
-        logging.error(f"Ошибка при загрузке файла {path}: {e}")
-        return []  # Возвращаем пустой список
 
-"""Реализуйте функцию, которая принимает на вход транзакцию и возвращает сумму транзакции (amount) в рублях,
-тип данных — float. 
-Если транзакция была в USD или EUR, происходит обращение к внешнему API для получения текущего курса валют 
-и конвертации суммы операции в рубли. Для конвертации валюты воспользуйтесь Exchange Rates Data API: 
-https://apilayer.com/exchangerates_data-api. Функцию конвертации поместите в модуль external_api.
-Используйте переменные окружения из файла .env для сокрытия чувствительных данных (токенов доступа для API).
-Создайте шаблон файла .env и разместите в репозитории на GitHub.
-Напишите тесты для новых функций, используйте Mock и patch."""
+            logger.info(f"Успешно загружено {len(data)} операций")
+            return data
+
+    except FileNotFoundError:
+        logger.error(f"Файл не найден: {path}")
+        return []
+    except json.JSONDecodeError:
+        logger.error(f"Ошибка JSON в файле: {path}")
+        return []
+    except Exception as e:
+        logger.error(f"Неожиданная ошибка: {type(e).__name__}: {str(e)}")
+        return []
 
 
-load_dotenv()  # Загружаем переменные окружения из .env
+load_dotenv()
+
 
 def convert_to_rub(amount: Union[int, float], currency: str) -> float:
-    """
-    Конвертирует сумму в рублях.
+    """Конвертирует сумму в рубли"""
+    try:
+        logger.debug(f"Начало конвертации: {amount} {currency}")
 
-    Аргументы:
-        amount (Union[int, float]): Сумма в исходной валюте.
-        currency (str): Код валюты (например, "USD", "EUR").
+        if currency == "RUB":
+            logger.debug("Валюта уже в RUB, конвертация не нужна")
+            return float(amount)
 
-    Возвращает:
-        float: Сумма в рублях.
-    """
-    if currency == "RUB":
-        return float(amount)  # Убедимся, что возвращаем float
+        api_key = os.getenv("EXCHANGE_RATE_API_KEY")
+        if not api_key:
+            logger.critical("Отсутствует API ключ!")
+            raise ValueError("API ключ не найден")
+
+        url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={currency}&amount={amount}"
+        headers = {"apikey": api_key}
+
+        logger.info(f"Запрос к API: {url}")
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+
+        data = response.json()
+        logger.debug(f"Ответ API: {data}")
+
+        if "result" not in data:
+            logger.error(f"Неожиданный ответ API: {data}")
+            raise ValueError("Неверный формат ответа")
+
+        result = float(data["result"])
+        logger.info(f"Конвертация успешна: {amount} {currency} = {result} RUB")
+        return result
+
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Ошибка запроса: {str(e)}")
+        raise
+    except Exception as e:
+        logger.error(f"Ошибка конвертации: {type(e).__name__}: {str(e)}")
+        raise
 
 
-    # Получаем API ключ из переменных окружения
-    api_key = os.getenv("EXCHANGE_RATE_API_KEY")
-    if not api_key:
-        raise ValueError("API ключ для конвертации валюты не найден")
+# Тестовый вызов для проверки логирования
+if __name__ == "__main__":
+    logger.info("Запуск тестового сценария")
 
-    # Запрос к API для получения курса валют
-    url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={currency}&amount={amount}"
-    headers = {"apikey": api_key}
-    response = requests.get(url, headers=headers)
+    # Тест загрузки операций
+    test_path = str(PROJECT_ROOT / "data" / "operations.json")
+    operations = load_operations(test_path)
+    logger.info(f"Загружено операций: {len(operations)}")
 
-    if response.status_code != 200:
-        raise ValueError(f"Ошибка при запросе к API: {response.status_code}")
+    # Тест конвертации (используем mock в реальных тестах)
+    try:
+        rub_amount = convert_to_rub(100, "USD")
+        logger.info(f"Тест конвертации: 100 USD = {rub_amount} RUB")
+    except Exception as e:
+        logger.error(f"Тест конвертации провален: {str(e)}")
 
-    data = response.json()
-    if "result" not in data:
-        raise ValueError("Невозможно получить курс валюты")
-
-    return float(data["result"])  # Убедимся, что возвращаем float
+    logger.info("Тестовый сценарий завершен")
