@@ -1,9 +1,9 @@
-2025-03-25 22:44:58 - utils - INFO - Логгер успешно инициализирован
-2025-03-25 22:44:58 - utils - INFO - Запуск тестового сценария
-2025-03-25 22:44:58 - utils - INFO - Попытка загрузить файл: /home/stayer/PycharmProjects/SkyPro/data/operations.json
-2025-03-25 22:44:58 - utils - INFO - Успешно загружено 101 операций
-2025-03-25 22:44:58 - utils - INFO - Загружено операций: 101
-2025-03-25 22:44:58 - utils - INFO - Запрос к API: https://api.apilayer.com/exchangerates_data/convert?to=RUB&from=USD&amount=100
-2025-03-25 22:45:01 - utils - ERROR - Ошибка запроса: 500 Server Error: Internal Server Error for url: https://api.apilayer.com/exchangerates_data/convert?to=RUB&from=USD&amount=100
-2025-03-25 22:45:01 - utils - ERROR - Тест конвертации провален: 500 Server Error: Internal Server Error for url: https://api.apilayer.com/exchangerates_data/convert?to=RUB&from=USD&amount=100
-2025-03-25 22:45:01 - utils - INFO - Тестовый сценарий завершен
+2025-03-26 09:34:10 - utils - INFO - Логгер успешно инициализирован
+2025-03-26 09:34:10 - utils - INFO - Запуск тестового сценария
+2025-03-26 09:34:10 - utils - INFO - Попытка загрузить файл: /home/stayer/PycharmProjects/SkyPro/data/operations.json
+2025-03-26 09:34:10 - utils - INFO - Успешно загружено 101 операций
+2025-03-26 09:34:10 - utils - INFO - Загружено операций: 101
+2025-03-26 09:34:10 - utils - INFO - Запрос к API: https://api.apilayer.com/exchangerates_data/convert?to=RUB&from=USD&amount=100
+2025-03-26 09:34:11 - utils - INFO - Конвертация успешна: 100 USD = 8462.1864 RUB
+2025-03-26 09:34:11 - utils - INFO - Тест конвертации: 100 USD = 8462.1864 RUB
+2025-03-26 09:34:11 - utils - INFO - Тестовый сценарий завершен
