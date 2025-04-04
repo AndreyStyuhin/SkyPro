@@ -1,12 +1,13 @@
-import unittest
 import os
-from typing import List, Dict, Any
+import unittest
 from pathlib import Path
+from typing import Any, Dict, List
+
 from src.utils_csv import read_csv_transactions, read_excel_transactions, read_transactions
 
 
 class TestTransactionReaders(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         # Определяем корневую директорию проекта
         # Если тесты запускаются из директории tests, нужно подняться на уровень выше
         if os.path.basename(os.getcwd()) == 'tests':
@@ -24,7 +25,7 @@ class TestTransactionReaders(unittest.TestCase):
         if not self.excel_file_path.exists():
             raise FileNotFoundError(f"Тестовый файл не найден: {self.excel_file_path}")
 
-    def verify_transactions(self, transactions):
+    def verify_transactions(self, transactions: List[Dict[str, Any]]) -> None:
         """Проверяет корректность загруженных транзакций"""
         # Проверяем, что транзакции загружены
         self.assertGreater(len(transactions), 0)
@@ -39,17 +40,17 @@ class TestTransactionReaders(unittest.TestCase):
         self.assertIn('currency_code', first_transaction)
         self.assertIn('description', first_transaction)
 
-    def test_read_csv_transactions(self):
+    def test_read_csv_transactions(self) -> None:
         """Тест чтения транзакций из CSV файла"""
         transactions = read_csv_transactions(self.csv_file_path)
         self.verify_transactions(transactions)
 
-    def test_read_excel_transactions(self):
+    def test_read_excel_transactions(self) -> None:
         """Тест чтения транзакций из Excel файла"""
         transactions = read_excel_transactions(self.excel_file_path)
         self.verify_transactions(transactions)
 
-    def test_read_transactions_auto_detect(self):
+    def test_read_transactions_auto_detect(self) -> None:
         """Тест автоопределения формата файла"""
         # Тест для CSV
         transactions_csv = read_transactions(self.csv_file_path)
@@ -59,7 +60,7 @@ class TestTransactionReaders(unittest.TestCase):
         transactions_excel = read_transactions(self.excel_file_path)
         self.verify_transactions(transactions_excel)
 
-    def test_read_transactions_unsupported_format(self):
+    def test_read_transactions_unsupported_format(self) -> None:
         """Тест обработки неподдерживаемого формата"""
         # Создаем временный путь к несуществующему файлу с неподдерживаемым расширением
         invalid_path = Path("test_file.txt")

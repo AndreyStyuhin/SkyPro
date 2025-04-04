@@ -13,60 +13,86 @@
 Напишите тесты для новых функций.
 """
 
-import pandas as pd
-from typing import List, Dict, Any, Union
+from io import BytesIO, StringIO
 from pathlib import Path
+from typing import Any, Dict, Hashable, List, Union, cast
+
+import pandas as pd
 
 
-def read_csv_transactions(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
+def read_csv_transactions(file_path: Union[str, Path, StringIO, BytesIO]) -> List[Dict[str, Any]]:
     """
-    Чтение транзакций из CSV файла
+    Чтение транзакций из CSV файла.
+
+    Функция считывает данные из CSV файла, используя точку с запятой в качестве разделителя,
+    и преобразует их в список словарей. Пропущенные значения (NaN) заменяются на None.
 
     Args:
-        file_path: Путь к CSV файлу
+        file_path: Путь к CSV файлу. Может быть строкой, объектом Path или файлоподобным объектом.
 
     Returns:
-        Список словарей с транзакциями
+        List[Dict[str, Any]]: Список словарей, где каждый словарь представляет одну транзакцию.
+            Ключи словаря - названия колонок, значения - соответствующие данные.
     """
     df = pd.read_csv(file_path, sep=';')
-    # Заменяем NaN на None для корректной работы с JSON
     transactions = df.replace({pd.NA: None}).to_dict('records')
-    return transactions
+    # Cast the keys to str since we know column names are strings
+    return [cast(Dict[str, Any], {str(k): v for k, v in record.items()})
+            for record in transactions]
 
 
-def read_excel_transactions(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
+def read_excel_transactions(file_path: Union[str, Path, BytesIO]) -> List[Dict[str, Any]]:
     """
-    Чтение транзакций из Excel файла (XLSX)
+    Чтение транзакций из Excel файла (XLSX).
+
+    Функция считывает данные из Excel файла (поддерживаются форматы .xlsx и .xls)
+    и преобразует их в список словарей. Пропущенные значения (NaN) заменяются на None.
 
     Args:
-        file_path: Путь к XLSX файлу
+        file_path: Путь к Excel файлу. Может быть строкой, объектом Path или файлоподобным объектом.
 
     Returns:
-        Список словарей с транзакциями
+        List[Dict[str, Any]]: Список словарей, где каждый словарь представляет одну транзакцию.
+            Ключи словаря - названия колонок, значения - соответствующие данные.
     """
     df = pd.read_excel(file_path)
-    # Заменяем NaN на None для корректной работы с JSON
     transactions = df.replace({pd.NA: None}).to_dict('records')
-    return transactions
+    # Cast the keys to str since we know column names are strings
+    return [cast(Dict[str, Any], {str(k): v for k, v in record.items()})
+            for record in transactions]
 
 
-def read_transactions(file_path: Union[str, Path]) -> List[Dict[str, Any]]:
+def read_transactions(file_path: Union[str, Path, StringIO, BytesIO]) -> List[Dict[str, Any]]:
     """
-    Чтение транзакций из файла (автоматически определяет формат)
+    Чтение транзакций из файла с автоматическим определением формата.
+
+    Функция определяет формат файла по расширению и вызывает соответствующую
+    функцию для чтения данных. Поддерживаются форматы CSV, XLSX и XLS.
+    Также принимает объекты StringIO/BytesIO для CSV/Excel соответственно.
 
     Args:
-        file_path: Путь к файлу
+        file_path: Путь к файлу с транзакциями (str/Path) или файлоподобный объект (StringIO/BytesIO).
 
     Returns:
-        Список словарей с транзакциями
+        List[Dict[str, Any]]: Список словарей с транзакциями.
 
     Raises:
-        ValueError: Если формат файла не поддерживается
+        ValueError: Если формат файла не поддерживается.
     """
-    path = Path(file_path)
+    # Обработка файлоподобных объектов
+    if isinstance(file_path, (StringIO, BytesIO)):
+        if isinstance(file_path, StringIO):
+            # StringIO только для CSV
+            return read_csv_transactions(file_path)
+        else:
+            # BytesIO только для Excel
+            return read_excel_transactions(file_path)
+
+    path = Path(file_path) if isinstance(file_path, str) else file_path
+
     if path.suffix.lower() == '.csv':
-        return read_csv_transactions(path)
+        return read_csv_transactions(file_path)
     elif path.suffix.lower() in ('.xlsx', '.xls'):
-        return read_excel_transactions(path)
+        return read_excel_transactions(file_path)
     else:
         raise ValueError(f"Unsupported file format: {path.suffix}")
