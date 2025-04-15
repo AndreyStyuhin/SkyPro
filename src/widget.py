@@ -3,7 +3,6 @@ from datetime import datetime
 
 from src.masks import get_mask_account, get_mask_card_number
 
-main
 def mask_account_card(account_card: str) -> str | None:
     """Функция mask_account_card принимает на вход строку формата
     Visa Platinum 7000792289606361, или Maestro 7000792289606361, или Счет 73654108430135874305.
@@ -65,4 +64,3 @@ def get_date(date: str) -> str | None:
         return None
     new_date: list[str] = date[0:10].split("-")
     return ".".join(new_date[::-1])
-main
