@@ -34,9 +34,11 @@ logger = logging.getLogger(__name__)
 def load_transactions(file_path: str) -> list:
     if file_path.endswith(".csv"):
         try:
-            df = pd.read_csv(file_path)
+            # Указываем разделитель ";" при чтении CSV
+            df = pd.read_csv(file_path, sep=';')
             transactions = []
             for _, row in df.iterrows():
+                # Обратите внимание, что имена столбцов в CSV соответствуют заголовкам файла
                 transaction = {
                     "id": str(row["id"]),
                     "state": row["state"],
@@ -44,11 +46,11 @@ def load_transactions(file_path: str) -> list:
                     "operationAmount": {
                         "amount": row["amount"],
                         "currency": {
-                            "name": row["currency.name"],
-                            "code": row["currency.code"]
+                            "name": row["currency_name"],  # В CSV это currency_name, не currency.name
+                            "code": row["currency_code"]  # В CSV это currency_code, не currency.code
                         }
                     },
-                    "from": row["from"],
+                    "from": row["from"] if pd.notna(row["from"]) else "",  # Обработка пустых значений
                     "to": row["to"],
                     "description": row["description"]
                 }
@@ -77,11 +79,11 @@ def load_transactions(file_path: str) -> list:
                     "operationAmount": {
                         "amount": row["amount"],
                         "currency": {
-                            "name": row["currency.name"],
-                            "code": row["currency.code"]
+                            "name": row["currency_name"],
+                            "code": row["currency_code"]
                         }
                     },
-                    "from": row["from"],
+                    "from": row["from"] if pd.notna(row["from"]) else "",
                     "to": row["to"],
                     "description": row["description"]
                 }
@@ -91,8 +93,8 @@ def load_transactions(file_path: str) -> list:
             logger.error(f"Ошибка при чтении файла xlsx {file_path}: {e}")
             raise
     else:
-            logger.error(f"Неподдерживаемый тип файла {file_path}")
-            raise ValueError(f"Неподдерживаемый тип файла {file_path}")
+        logger.error(f"Неподдерживаемый тип файла {file_path}")
+        raise ValueError(f"Неподдерживаемый тип файла {file_path}")
 
 # Функция форматирования вывода данных о транзакциях
 def format_transaction(transaction):
@@ -307,7 +309,7 @@ def main():
         filtered_transactions = filter_transactions(filtered_transactions, search_string)
 
     # Выводим отфильтрованные транзакции
-    print("Распечатываю итоговый список транзакцийю...:")
+    print("Распечатываю итоговый список транзакций...:")
     if filtered_transactions:
         print(f"Всего банковских транзакций в выборке: {len(filtered_transactions)}")
         for transaction in filtered_transactions:

@@ -8,7 +8,7 @@ from src.utils import PROJECT_ROOT
 PROJECT_ROOT = (os.path.dirname(os.path.abspath(__file__)))
 
 # Путь к директории с данными
-DATA_DIR = os.path.join(PROJECT_ROOT, 'data')
+DATA_DIR = os.path.join(PROJECT_ROOT, 'Data')
 
 # Путь к директории с логами
 LOG_DIR = os.path.join(PROJECT_ROOT, 'logs')
@@ -27,4 +27,4 @@ LOG_FORMAT = {
 # Принимаем путь к основной директории проекта
 
 BASE_DIR = Path(__file__).resolve().parent.parent # Указатель на директорию проекта project/
-DATA_DIR = BASE_DIR / 'data' # Путь к директории с данными
+DATA_DIR = BASE_DIR / 'Data' # Путь к директории с данными
