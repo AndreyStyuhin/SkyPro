@@ -38,7 +38,9 @@ def setup_logger():
     logger.addHandler(file_handler)
     return logger
 
-logger= setup_logger()
+
+logger = setup_logger()
+
 
 def get_mask_card_number(card_number: int) -> str:
     """Возвращает маскированный номер карты в формате: XXXX XX** **** XXXX. Отображаются первые 6 цифр (4+2),

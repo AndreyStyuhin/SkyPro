@@ -1,13 +1,14 @@
 import json
-import os
 import logging
+import os
 from pathlib import Path
-from typing import List, Dict, Any, Union
+from typing import Any, Dict, List, Union
+
 import requests
 from dotenv import load_dotenv
 
 # Настройка логгера должна быть ДО всех функций
-PROJECT_ROOT = Path(__file__).parent.parent
+PROJECT_ROOT: Path = Path(__file__).parent.parent
 LOG_DIR = PROJECT_ROOT / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 

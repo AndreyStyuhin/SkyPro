@@ -1,8 +1,9 @@
-from unittest.mock import patch, MagicMock
-from src.utils import load_operations, convert_to_rub
-
 # Тест для load_operations
 import json
+from unittest.mock import MagicMock, patch
+
+from src.utils import convert_to_rub, load_operations
+
 
 def test_load_operations():
     # Создаем временный файл с данными
@@ -19,6 +20,7 @@ def test_load_operations():
 
     result = load_operations("empty_operations.json")
     assert result == []
+
 
 # Тест для convert_to_rub
 @patch("requests.get")

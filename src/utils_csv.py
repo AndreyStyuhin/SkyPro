@@ -1,5 +1,6 @@
 """Проект развивается, и источником данных о финансовых транзакциях теперь может быть не только JSON-файл,
-но и CSV- или XLSX-файл. Благодаря знаниям о библиотеке pandas наконец можно реализовать поддержку новых форматов данных.
+но и CSV- или XLSX-файл. Благодаря знаниям о библиотеке pandas наконец можно реализовать поддержку новых
+форматов данных.
 
 Файлы
  Data/transactions.csv и
@@ -15,7 +16,7 @@
 
 from io import BytesIO, StringIO
 from pathlib import Path
-from typing import Any, Dict, Hashable, List, Union, cast
+from typing import Any, Dict, List, Union, cast
 
 import pandas as pd
 

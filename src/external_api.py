@@ -1,12 +1,13 @@
 import os
+
 import requests
-from typing import Dict, Any
 from dotenv import load_dotenv
 
 load_dotenv()
 
 API_KEY = os.getenv('EXCHANGE_RATE_API_KEY')
 BASE_URL = 'https://api.apilayer.com/exchangerates_data/latest'
+
 
 def get_exchange_rate(base_currency: str, target_currency: str) -> float:
     """
@@ -30,6 +31,7 @@ def get_exchange_rate(base_currency: str, target_currency: str) -> float:
     response.raise_for_status()
     data = response.json()
     return data['rates'][target_currency]
+
 
 def convert_to_rub(amount: float, currency: str) -> float:
     """
