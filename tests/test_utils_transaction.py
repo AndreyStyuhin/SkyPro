@@ -4,6 +4,7 @@ from src.utils import load_operations, convert_to_rub
 # Тест для load_operations
 import json
 
+
 def test_load_operations():
     # Создаем временный файл с данными
     with open("test_operations.json", "w", encoding="utf-8") as f:
@@ -19,6 +20,7 @@ def test_load_operations():
 
     result = load_operations("empty_operations.json")
     assert result == []
+
 
 # Тест для convert_to_rub
 @patch("requests.get")

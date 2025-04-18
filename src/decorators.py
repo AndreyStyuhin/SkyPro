@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from typing import Callable, TypeVar, Any
 
+
 # Настройка логирования
 def setup_logger(filename: str | None = None) -> logging.Logger:
     """
@@ -33,6 +34,7 @@ def setup_logger(filename: str | None = None) -> logging.Logger:
         logger.addHandler(console_handler)
 
     return logger
+
 
 # Декоратор для логирования вызовов функции
 def log(filename: str | None = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:

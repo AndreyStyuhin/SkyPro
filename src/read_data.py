@@ -3,16 +3,16 @@ import os
 import re
 from typing import Dict, List
 
-from mypy.typeops import false_only
-from requests.utils import dict_from_cookiejar
+# from mypy.typeops import false_only
+# from requests.utils import dict_from_cookiejar
 
 from src.config import DATA_DIR
-from src.config import LOG_DIR
+# from src.config import LOG_DIR
 import pandas as pd
 
 # Путь к директории с данными
-csv_file_path = DATA_DIR / 'transactions.csv' # Путь к файлу CSV
-excel_file_path = DATA_DIR / 'transactions.xlsx' # Путь к файлу Excel
+csv_file_path = DATA_DIR / 'transactions.csv'  # Путь к файлу CSV
+excel_file_path = DATA_DIR / 'transactions.xlsx'  # Путь к файлу Excel
 
 # Создаем директорию для логов, если ее нет
 logs_dir = DATA_DIR.parent / 'logs'

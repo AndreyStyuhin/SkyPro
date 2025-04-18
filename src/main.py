@@ -26,7 +26,8 @@ EXECUTED
 
 Программа: Операции отфильтрованы по статусу "EXECUTED"
 
-В случае, если пользователь ввел неверный статус, программа не должна падать в ошибку, а должна возвращать пользователя к вводу корректного статуса:
+В случае, если пользователь ввел неверный статус, программа не должна падать в ошибку, а должна возвращать
+пользователя к вводу корректного статуса:
 
 Пользователь: test
 
@@ -35,7 +36,8 @@ EXECUTED
 Программа: Введите статус, по которому необходимо выполнить фильтрацию.
 Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING
 
- После фильтрации программа выводит следующие вопросы для уточнения выборки операций, необходимых пользователю, и выводит в консоль операции, соответствующие выборке пользователя:
+После фильтрации программа выводит следующие вопросы для уточнения выборки операций, необходимых пользователю,
+и выводит в консоль операции, соответствующие выборке пользователя:
 Программа: Отсортировать операции по дате? Да/Нет
 
 Пользователь: да
@@ -96,6 +98,7 @@ import logging
 import os
 import re
 from collections import Counter
+from typing import Dict, List, Any
 
 # Импортируем необходимые функции из других модулей
 from src.utils import load_operations
@@ -118,8 +121,19 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def load_transactions(file_path: str) -> list:
-    """Загружает транзакции из файла в зависимости от его формата"""
+def load_transactions(file_path: str) -> List[Dict[str, Any]]:
+    """Загружает транзакции из файла в зависимости от его формата
+
+    Args:
+        file_path: Путь к файлу с транзакциями
+
+    Returns:
+        Список транзакций
+
+    Raises:
+        ValueError: Если формат файла не поддерживается
+        Exception: При ошибке чтения файла
+    """
     if file_path.endswith(".csv"):
         try:
             return read_csv_transactions(file_path)
@@ -143,8 +157,16 @@ def load_transactions(file_path: str) -> list:
         raise ValueError(f"Неподдерживаемый тип файла {file_path}")
 
 
-def filter_transactions_by_description(transactions, search_string):
-    """Фильтрует транзакции по строке поиска в описании"""
+def filter_transactions_by_description(transactions: List[Dict[str, Any]], search_string: str) -> List[Dict[str, Any]]:
+    """Фильтрует транзакции по строке поиска в описании
+
+    Args:
+        transactions: Список транзакций
+        search_string: Строка для поиска в описании
+
+    Returns:
+        Отфильтрованный список транзакций
+    """
     if not search_string:
         return transactions
 
@@ -159,9 +181,16 @@ def filter_transactions_by_description(transactions, search_string):
     return filtered
 
 
-def count_transactions_by_category(transactions):
-    """Подсчитывает количество операций по категориям"""
-    categories = Counter()
+def count_transactions_by_category(transactions: List[Dict[str, Any]]) -> Counter:
+    """Подсчитывает количество операций по категориям
+
+    Args:
+        transactions: Список транзакций
+
+    Returns:
+        Counter с количеством операций по категориям
+    """
+    categories: Counter[str] = Counter()
 
     for transaction in transactions:
         description = transaction.get("description", "Неизвестно")
@@ -178,8 +207,12 @@ def count_transactions_by_category(transactions):
     return categories
 
 
-def print_transaction(transaction):
-    """Выводит информацию о транзакции"""
+def print_transaction(transaction: Dict[str, Any]) -> None:
+    """Выводит информацию о транзакции
+
+    Args:
+        transaction: Словарь с данными транзакции
+    """
     date = get_date(transaction["date"])
     description = transaction["description"]
 
@@ -215,7 +248,8 @@ def print_transaction(transaction):
         print("Сумма: Неизвестна\n")
 
 
-def main():
+def main() -> None:
+    """Основная функция программы"""
     print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.")
     print("Выберите необходимый пункт меню:")
     print("1. Получить информацию о транзакциях из JSON-файла")

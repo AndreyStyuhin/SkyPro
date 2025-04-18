@@ -13,6 +13,7 @@ my_function error: тип ошибки. Inputs: (1, 2), {}
 Где тип ошибки заменяется на текст ошибки.
 '''
 
+
 # Пример успешной функции
 @log(filename="mylog.txt")
 def successful_function(x, y):
