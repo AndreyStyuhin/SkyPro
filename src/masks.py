@@ -2,9 +2,15 @@ import logging
 from pathlib import Path
 
 
-# Настройка логгера для модуля masks
-def setup_logger():
 
+# Настройка логгера для модуля masks
+def setup_logger() -> logging.Logger:
+    """
+    Настраивает и возвращает логгер для модуля masks.
+
+    Returns:
+        logging.Logger: Настроенный логгер
+    """
     # Получаем путь к текущему файлу (masks.py)
     current_file = Path(__file__)
 
@@ -46,9 +52,17 @@ def get_mask_card_number(card_number: int) -> str:
     """Возвращает маскированный номер карты в формате: XXXX XX** **** XXXX. Отображаются первые 6 цифр (4+2),
     следующие 2 цифры заменяются на "**", за ними следуют ещё 4 скрытые цифры "****",
     и последние 4 цифры номера отображаются без маски.
-    :param card_number: Номер банковской карты в виде целого числа.
-    :return: Маскированный номер карты в виде строки."""
 
+    Args:
+        card_number: Номер банковской карты в виде целого числа.
+
+    Returns:
+        str: Маскированный номер карты в виде строки.
+
+    Raises:
+        ValueError: Если номер карты не содержит ровно 16 цифр.
+        Exception: При других ошибках маскирования.
+    """
     try:
         card_str = str(card_number)
         if len(card_str) != 16:
@@ -68,9 +82,17 @@ def get_mask_card_number(card_number: int) -> str:
 def get_mask_account(account_number: int) -> str:
     """Возвращает маскированный номер счета в формате: **XXXX.
     Отображаются последние 4 цифры, а первые 2 цифры заменяются на "**".
-    :param account_number: Номер счета в виде целого числа.
-    :return: Маскированный номер счета в виде строки."""
 
+    Args:
+        account_number: Номер счета в виде целого числа.
+
+    Returns:
+        str: Маскированный номер счета в виде строки.
+
+    Raises:
+        ValueError: Если номер счета не содержит ровно 20 цифр.
+        Exception: При других ошибках маскирования.
+    """
     try:
         account_str = str(account_number)
         if len(account_str) != 20:

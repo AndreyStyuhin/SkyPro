@@ -1,17 +1,20 @@
-def filter_by_currency(transactions, currency):
+from typing import Dict, Generator, List, Any
+
+
+def filter_by_currency(transactions: List[Dict[str, Any]], currency: str) -> Generator[Dict[str, Any], None, None]:
     """Генератор, который фильтрует транзакции по заданной валюте."""
     for transaction in transactions:
         if transaction.get("operationAmount", {}).get("currency", {}).get("code") == currency:
             yield transaction
 
 
-def transaction_descriptions(transactions):
+def transaction_descriptions(transactions: List[Dict[str, Any]]) -> Generator[str, None, None]:
     """Генератор, который возвращает описание каждой транзакции по очереди."""
     for transaction in transactions:
         yield transaction.get("description", "")
 
 
-def card_number_generator(start, end):
+def card_number_generator(start: int, end: int) -> Generator[str, None, None]:
     """Генератор, который выдает номера банковских карт в формате XXXX XXXX XXXX XXXX."""
     if start < 0 or end < 0 or start > end:
         return  # Возвращаем пустой генератор, если диапазон некорректен

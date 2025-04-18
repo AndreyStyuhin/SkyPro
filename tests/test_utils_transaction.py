@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 from src.utils import convert_to_rub, load_operations
 
 
+
 def test_load_operations():
     # Создаем временный файл с данными
     with open("test_operations.json", "w", encoding="utf-8") as f:

@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Any, Callable, TypeVar
 
 
+
 # Настройка логирования
 def setup_logger(filename: str | None = None) -> logging.Logger:
     """

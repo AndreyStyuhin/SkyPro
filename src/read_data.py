@@ -1,11 +1,14 @@
 import logging
 import os
 import re
-from typing import Any, Dict, Hashable, List
+from typing import Dict, List
 
-import pandas as pd
+# from mypy.typeops import false_only
+# from requests.utils import dict_from_cookiejar
 
 from src.config import DATA_DIR
+# from src.config import LOG_DIR
+import pandas as pd
 
 # Путь к директории с данными
 csv_file_path = DATA_DIR / 'transactions.csv'  # Путь к файлу CSV
@@ -25,8 +28,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
-def read_transactions_from_csv(file_path: str) -> list[dict[Hashable, Any]]:
+def read_transactions_from_csv(file_path: str) -> List[Dict[str, str]]:
     """Функция read_csv принимает на вход путь к файлу CSV и возвращает список словарей,
     где каждый словарь соответствует строке CSV файла.
     :param file_path: Путь к файлу CSV
@@ -43,8 +45,7 @@ def read_transactions_from_csv(file_path: str) -> list[dict[Hashable, Any]]:
         logger.error(f"Ошибка при чтении файла {file_path}: {e}")
         raise
 
-
-def read_transactions_from_excel(file_path: str) -> list[dict[Hashable, Any]]:
+def read_transactions_from_excel(file_path: str) -> List[Dict[str, str]]:
     """Функция read_excel принимает на вход путь к файлу Excel и возвращает список словарей,
     где каждый словарь соответствует строке Excel файла.
     :param file_path: Путь к файлу Excel
@@ -62,7 +63,6 @@ def read_transactions_from_excel(file_path: str) -> list[dict[Hashable, Any]]:
         logger.error(f"Ошибка при чтении файла {file_path}: {e}")
         raise
 
-
 def filter_transactions(transactions: List[Dict], search_string: str) -> List[Dict]:
     """Функция filter_transactions принимает на вход список словарей,
     где каждый словарь соответствует строке CSV файла, и строку filter_by,
@@ -74,13 +74,12 @@ def filter_transactions(transactions: List[Dict], search_string: str) -> List[Di
     :return: Список словарей, где каждый словарь соответствует строке CSV файла, отфильтрованный по значению filter_by
     """
     logger.info(f"Фильтрация транзакций по {search_string}")
-    pattern = re.compile(re.escape(search_string), re.IGNORECASE)  # Создаем шаблон для поиска
+    pattern = re.compile(re.escape(search_string), re.IGNORECASE) # Создаем шаблон для поиска
     filtered_transactions = [
         transaction for transaction in transactions if pattern.search(transaction.get("description", ""))
     ]
     logger.info(f"Найдено {len(filtered_transactions)} транзакций")
     return filtered_transactions
-
 
 def count_transactions_by_category(transactions: List[Dict], categories: List[str]) -> Dict[str, int]:
     """Функция count_transactions_by_category принимает на вход список словарей,
