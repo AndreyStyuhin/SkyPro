@@ -1,7 +1,8 @@
 import logging
 import os
 from datetime import datetime
-from typing import Callable, TypeVar, Any
+from typing import Any, Callable, TypeVar
+
 
 
 # Настройка логирования
