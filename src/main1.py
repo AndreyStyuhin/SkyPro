@@ -105,7 +105,7 @@ YYYY-MM-DD HH:MM:SS.
 
 import sys
 from typing import Callable, Dict, List, Tuple
-from src.views import (
+from views import (
     display_main_page,
     display_events_page,
     display_cashback_categories,
@@ -114,7 +114,7 @@ from src.views import (
     display_phone_search,
     display_person_transfers_search
 )
-from src.reports import (
+from reports import (
     display_spending_by_category,
     display_spending_by_weekday,
     display_spending_by_day_type
